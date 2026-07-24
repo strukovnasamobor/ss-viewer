@@ -1,0 +1,9 @@
+ion-footer {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: var(--ion-footer-background);
+    color: var(--ion-footer-color);
+}

@@ -1,0 +1,210 @@
+.classes.from-cache {
+    border: 5px solid red;
+}
+
+.classes .swipe-container {
+    min-height: 100%;
+}
+
+.classes ion-card-title {
+    color: var(--ion-card-title-color);
+}
+
+.classes ion-card {
+    cursor: pointer;
+}
+
+.classes .clickable {
+    cursor: pointer;
+}
+
+.classes .schedule-table-container {
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+}
+
+.classes .schedule-table {
+    font-size: clamp(4px, 0.8vw + 0.4rem, 16px);
+    border-collapse: collapse;
+    table-layout: fixed;   
+}
+
+.classes .schedule-table .subject-classroom {
+    text-align: left;
+    font-weight: bold;
+}
+
+.classes .schedule-table .teacher {
+    text-align: right;
+    font-style: italic;
+}
+
+.classes .schedule-table td {
+    vertical-align: top;
+}
+
+.classes .schedule-table td:nth-child(1),
+.classes .schedule-table td:nth-child(2) {
+    vertical-align: middle;
+    word-break: normal;
+    white-space: nowrap;
+}
+
+.classes .schedule-table tr,
+.classes .schedule-table th,
+.classes .schedule-table td {
+    border: 1px solid #000000;
+    padding: 3px;
+    text-align: center;
+    word-break: break-word;
+    white-space: normal; 
+}
+
+body.dark .classes .schedule-table tr,
+body.dark .classes .schedule-table th,
+body.dark .classes .schedule-table td {
+    border-color: #ffffff;
+}
+
+.classes .schedule-table .table-header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.classes .schedule-table .header-container-left, 
+.classes .schedule-table .header-container-right {
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    font-weight: normal;
+}
+
+.classes .schedule-table .header-container-left {
+    justify-content: flex-start;
+}
+
+.classes .schedule-table .header-container-right {
+    justify-content: flex-end;
+}
+
+.classes .schedule-table .arrow-left {
+    margin-right: 10px;
+    display: flex;
+    font-size: 18pt;
+    width: 20px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.classes .schedule-table .arrow-right {
+    margin-left: 10px;
+    display: flex;
+    font-size: 18pt;
+    width: 20px;
+    text-align: right;
+    cursor: pointer;
+}
+
+.classes .schedule-table .class-name {
+    width: 20%;
+    font-size: clamp(12px, 0.8vw + 1.2rem, 48px);
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.classes .class-list-link {
+    cursor: pointer;
+}
+
+.classes .schedule-table .theader-blue th {
+    background-color: #8db3e2;
+}
+
+body.dark .classes .schedule-table .theader-blue th {
+    background-color: #3578cc;
+}
+
+.classes .schedule-table .theader-red th {
+    background-color: #ffcccc;
+}
+
+body.dark .classes .schedule-table .theader-red th {
+    background-color: #ff4242;
+}
+
+.classes .schedule-table .middle-blue {
+    border: #0000ff solid 2px;
+}
+
+.classes .schedule-table .middle-red {
+    border: #ff0000 solid 2px;
+}
+
+.classes .schedule-table .day {
+    width: 19%;
+}
+
+.classes .schedule-table .current {
+    background-color: rgba(255, 255, 0, 0.5) !important;;
+}
+
+body.dark .classes .schedule-table .current {
+    background-color: rgba(178, 178, 0, 0.5) !important;;
+}
+
+.classes .schedule-table .changed {
+    border: 2px solid rgb(153 , 0, 255);
+}
+
+body.dark .classes .schedule-table .changed {
+    border: 2px solid rgb(153 , 0, 255);
+}
+
+.classes .schedule-table .class-classroom {
+    font-weight: bold;
+}
+
+.classes .timeslot-substitution {
+    background-color: rgba(153 , 0, 255, 0.5);
+}
+
+body.dark .classes .timeslot-substitution {
+    background-color: rgba(107 , 0, 179, 0.5);
+}
+
+@media only screen and (max-width: 768px) {
+    .classes .schedule-table td {
+        padding: 2px;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .classes .schedule-table tr,
+    .classes .schedule-table th,
+    .classes .schedule-table td {
+        border: 0.8px solid black;
+    }
+
+    .classes .schedule-table td {
+        padding: 1px;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .classes .schedule-table tr,
+    .classes .schedule-table th,
+    .classes .schedule-table td {
+        border: 0.8px solid black;
+    }
+
+    .classes .schedule-table td {
+        padding: 0px;
+    }
+}

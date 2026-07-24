@@ -1,0 +1,10 @@
+.react-transform-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.react-transform-component {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+}
