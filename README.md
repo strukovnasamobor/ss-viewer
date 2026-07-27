@@ -1,7 +1,7 @@
-# AppName
+# SS Viewer
 
 <a href="https://raspored.strukovnasamobor.hr" target="_blank">
-  <img src="public/images/header.png" height="240" alt="AppName"/>
+  <img src="public/images/header.png" height="240" alt="SS Viewer"/>
 </a>
 
 Web App:<br>https://raspored.strukovnasamobor.hr<br><br>

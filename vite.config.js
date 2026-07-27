@@ -6,21 +6,37 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.js',
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',     
-      manifest: false,            // Tells plugin to use your existing manifest.json
-      includeAssets: [],          // Anything used offline but not referenced in the manifest or code
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      includeAssets: [
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "icons/icon-512-maskable.png",
+        "i18n/en.json",
+        "i18n/hr.json",
+      ],
+      manifest: {
+        id: "com.strukovnasamobor.ssviewer_ucenici.twa",
+        name: "SS Viewer",
+        short_name: "SS Viewer",
+        theme_color: "#004080",
+        background_color: "#004080",
+        display: "standalone",
+        orientation: "portrait",
+        start_url: "/",
+        icons: [
+          { src: "icons/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "icons/icon-512.png", sizes: "512x512", type: "image/png" },
+          { src: "icons/icon-512-maskable.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+      },
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.js",
     }),
   ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
   build: {
-    minify: 'terser',
+    minify: "terser",
     terserOptions: {
       compress: {
         drop_console: true, // Set to true in production
@@ -31,14 +47,18 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('firebase')) return 'firebase';
-            if (id.includes('react')) return 'react-vendor';
-            if (id.includes('@ionic')) return 'ionic-core';
-            return 'vendor';
+          if (id.includes("node_modules")) {
+            if (id.includes("firebase")) return "firebase";
+            if (id.includes("react")) return "react-vendor";
+            if (id.includes("@ionic")) return "ionic-core";
+            return "vendor";
           }
         },
       },
     },
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
   },
 });
