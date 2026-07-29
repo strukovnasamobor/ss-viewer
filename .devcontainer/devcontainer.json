@@ -1,5 +1,5 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
   "waitFor": "onCreateCommand",
   "updateContentCommand": "npm install",
   "postCreateCommand": "",
@@ -25,14 +25,13 @@
       "extensions": [
         "esbenp.prettier-vscode",
         "NuclleaR.vscode-extension-auto-import",
+        "github.copilot-chat",
         "ms-vsliveshare.vsliveshare",
         "keksiqc.idx-monospace-theme"
       ]
     },
     "codespaces": {
-      "openFiles": [
-        "src/App.jsx"
-      ]
+      "openFiles": ["README.md"]
     }
   },
   "portsAttributes": {
