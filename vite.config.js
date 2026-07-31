@@ -44,19 +44,6 @@ export default defineConfig({
         drop_debugger: true, // Set to true in production
       },
     },
-    chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("firebase")) return "firebase";
-            if (id.includes("react")) return "react-vendor";
-            if (id.includes("@ionic")) return "ionic-core";
-            return "vendor";
-          }
-        },
-      },
-    },
   },
   test: {
     globals: true,
