@@ -382,7 +382,7 @@
 				);
 				MARKETING_VERSION = 1;
 				CURRENT_PROJECT_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "hr.strukovnasamobor.ssviewer_ucenici";
+				PRODUCT_BUNDLE_IDENTIFIER = "hr.strukovnasamobor.ssviewer-ucenici";
 				PRODUCT_NAME = "SSViewer_Učenici";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = YES;
@@ -410,7 +410,7 @@
 				);
 				MARKETING_VERSION = 1;
 				CURRENT_PROJECT_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "hr.strukovnasamobor.ssviewer_ucenici";
+				PRODUCT_BUNDLE_IDENTIFIER = "hr.strukovnasamobor.ssviewer-ucenici";
 				PRODUCT_NAME = "SSViewer_Učenici";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
