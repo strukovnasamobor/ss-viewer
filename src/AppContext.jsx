@@ -54,7 +54,7 @@ export function AppContextProvider({ children }) {
   }
 
   useEffect(() => {
-    getWeekNumber() % 2 == 0 ? setTurnus(true) : setTurnus(false);
+    getWeekNumber() % 2 != 0 ? setTurnus(true) : setTurnus(false);
   }, []);
 
   useEffect(() => {
