@@ -607,23 +607,20 @@ export default function Teachers() {
                     if (newCellContent.includes("1G") && newCellContent.includes("UVO")) {
                       backgroundColor = "background-blue";
                     }
-                    else if (newCellContent.includes("2G") && newCellContent.includes("ALG")) {
+                    else if (newCellContent.includes("2G") && newCellContent.includes("PRO")) {
                       backgroundColor = "background-green";
-                    }
-                    else if (newCellContent.includes("3G") && newCellContent.includes("SAT")) {
-                      backgroundColor = "background-orange";
                     }
                     else if (newCellContent.includes("3G") && newCellContent.includes("NAP")) {
                       backgroundColor = "background-red-1";
-                    }
-                    else if (newCellContent.includes("3G") && newCellContent.includes("SKR")) {
-                      backgroundColor = "background-purple";
                     }
                     else if (newCellContent.includes("3G") && newCellContent.includes("UMJ")) {
                       backgroundColor = "background-yellow";
                     }
                     else if (newCellContent.includes("4G") && newCellContent.includes("NAP")) {
                       backgroundColor = "background-red-2";
+                    }
+                    else if (newCellContent.includes("4G") && newCellContent.includes("SAT")) {
+                      backgroundColor = "background-orange";
                     }
                   }
 
