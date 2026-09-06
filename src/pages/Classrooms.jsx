@@ -22,6 +22,7 @@ import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { db } from '../../firebase';
 import { useTranslation } from 'react-i18next';
 import isTeacherHost from "../utils/TeacherHost";
+import { parseScheduleJson } from "../utils/ParseScheduleJson";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from '../utils/VapidKeyPulic';
 
 export default function Classrooms() {
@@ -83,16 +84,12 @@ export default function Classrooms() {
           const isFromCache = docSnap.metadata.fromCache;
           setFromCache(isFromCache);
 
-          let newData = docSnap.data().new_data;
-          if (newData !== undefined && newData !== null && newData !== "")
-            newData = JSON.parse(newData);
-          else
-            newData = null;
-          let olData = docSnap.data().old_data;
-          if (olData !== undefined && olData !== null && olData !== "")
-            olData = JSON.parse(olData);
-          else
-            olData = null;
+          const newData = parseScheduleJson(docSnap.data().new_data);
+          const olData = parseScheduleJson(docSnap.data().old_data) ?? [];
+          if (newData === null) {
+            console.log("Classrooms > No usable new_data!");
+            return;
+          }
           const data = [];
           for (let i = 0; i < newData.length; i++) {
             data[newData[i].name] = {
