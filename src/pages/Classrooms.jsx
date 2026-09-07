@@ -395,7 +395,7 @@ export default function Classrooms() {
                     oldnewCellContent = turnus ? classroomData.oldScheduleBlue[index] : classroomData.oldScheduleRed[index];
                   else
                     oldnewCellContent = newCellContent;
-                  const currentTurnus = getWeekNumber() % 2 == 0 ? true : false;
+                  const currentTurnus = getWeekNumber() % 2 != 0 ? true : false;
 
                   let backgroundColor = "";
 

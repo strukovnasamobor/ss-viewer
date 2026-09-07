@@ -582,7 +582,7 @@ export default function Teachers() {
                     oldnewCellContent = turnus ? teacherData.oldScheduleBlue[index] : teacherData.oldScheduleRed[index];
                   else
                     oldnewCellContent = newCellContent;
-                  const currentTurnus = getWeekNumber() % 2 == 0 ? true : false;
+                  const currentTurnus = getWeekNumber() % 2 != 0 ? true : false;
 
                   let backgroundColor = "";
                   if (newCellContent.includes("INFORMACIJE")) {
