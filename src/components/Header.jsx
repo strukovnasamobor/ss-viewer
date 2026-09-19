@@ -344,18 +344,6 @@ export default function Header() {
                   {t("shiftWork")}
                 </div>
               )}
-              {isTeacherHost && (
-                <div
-                  className="dropdown-item"
-                  onClick={() => {
-                    const win = window.open("", "_blank");
-                    win.location = "http://tiny.cc/ss-evidencija";
-                    toggleDropdown();
-                  }}
-                >
-                  {t("workRecord")}
-                </div>
-              )}
               {isTeacherHost ? (
                 <div
                   className="dropdown-item"
