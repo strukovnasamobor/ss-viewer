@@ -71,3 +71,8 @@ body.dark .alert-wrapper {
     height: fit-content;
   }
 }
+/* FitText: measured as one line and shrunk to its parent's width */
+.fit-text {
+  display: inline-block;
+  white-space: nowrap;
+}

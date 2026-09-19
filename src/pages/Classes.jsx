@@ -16,8 +16,11 @@ import { useLocation } from "react-router-dom";
 import { onSnapshot, doc } from 'firebase/firestore';
 import { useContext, useEffect, useState, useRef } from 'react';
 import Loading from '../components/Loading';
+import FitText from '../components/FitText';
 import React from 'react';
 import { useSwipeable } from 'react-swipeable';
+import useArrowKeyNavigation from '../utils/useArrowKeyNavigation';
+import { getCurrentTurnus, getScheduleDay, isAfterSchoolDay } from '../utils/ScheduleTime';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { db } from '../../firebase';
 import { useTranslation } from 'react-i18next';
@@ -254,6 +257,12 @@ export default function Classes() {
     trackTouch: isTouchDevice && !isPannable
   });
 
+  // Keyboard counterpart of the swipe handlers for non-touch devices
+  useArrowKeyNavigation(
+    !isTouchDevice && !!classId && location.pathname.includes("classes"),
+    navigateToCard
+  );
+
   const timeSlots = [
     '08:00-08:45', '08:50-09:35', '09:40-10:25', '10:40-11:25',
     '11:30-12:15', '12:20-13:05', '13:10-13:55', '14:00-14:45',
@@ -261,19 +270,12 @@ export default function Classes() {
     '18:20-19:05', '19:10-19:55'
   ];
 
+  const days = ['PONEDJELJAK', 'UTORAK', 'SRIJEDA', 'ČETVRTAK', 'PETAK'];
+
   const periods = [
     '1.', '2.', '3.', '4.', '5.', '6.', '7./0.', '8./1.',
     '9./2.', '10./3.', '11./4.', '12./5.', '13./6.', '14./7.'
   ];
-
-  function getWeekNumber() {
-    let currentDate = new Date();
-    currentDate.setHours(currentDate.getHours() + 52);
-    currentDate.setUTCDate(currentDate.getUTCDate() + 4 - (currentDate.getUTCDay() || 7));
-    var yearStart = new Date(Date.UTC(currentDate.getUTCFullYear(), 0, 1));
-    // @ts-ignore
-    return Math.ceil((((currentDate - yearStart) / 86400000) + 1) / 7);
-  }
 
   function handleClassroomPartOnClick(classroomId) {
     router.push(`/classrooms?id=${classroomId}`, "forward", "push");
@@ -282,6 +284,20 @@ export default function Classes() {
   function handleTeacherPartOnClick(teacherName) {
     router.push(`/teachers?name=${teacherName}`, "forward", "push");
   }
+
+  // razrednik / zamjenik in the header: link to the teacher on the teacher host
+  const renderHeaderTeacherLink = (teacherName) => {
+    const name = teacherName?.trim();
+    if (!isTeacherHost || !name) return teacherName;
+    return (
+      <span
+        className="header-teacher-link clickable"
+        onClick={() => handleTeacherPartOnClick(name)}
+      >
+        {teacherName}
+      </span>
+    );
+  };
 
   const renderScheduleTable = (classData) => {
     if (!classData) return null;
@@ -354,6 +370,11 @@ export default function Classes() {
     };
 
     const currentTimeSlotIndex = getCurrentTimeSlotIndex();
+    // "current" marker: only while the displayed turnus is the one in effect.
+    // After 20:00 (or on the weekend) it moves to the header of the next school day.
+    const showCurrent = turnus == getCurrentTurnus(currentTime);
+    const afterSchoolDay = isAfterSchoolDay(currentTime);
+    const currentDay = getScheduleDay(currentTime);
   
     return (
       <div className="schedule-table-container">
@@ -380,7 +401,10 @@ export default function Classes() {
                   </div>
                   <div className="class-name">{classData.name}</div>
                   <div className="header-container-right">
-                    <div>razrednik:&nbsp;{classData.classteacher}<br />zamjenik:&nbsp;{classData.viceteacher}</div>
+                    <div>
+                      razrednik:&nbsp;{renderHeaderTeacherLink(classData.classteacher)}<br />
+                      zamjenik:&nbsp;{renderHeaderTeacherLink(classData.viceteacher)}
+                    </div>
                     <div className="arrow-right" onClick={() => navigateToCard('right')}>
                       <IonIcon size="" icon={chevronForwardOutline} />
                     </div>
@@ -390,11 +414,11 @@ export default function Classes() {
             </tr>
             <tr className={`theader-${turnus ? "blue" : "red"}`}>
               <th className='timeslot' colSpan={2}>{turnus ? "PLAVI" : "CRVENI"}</th>
-              <th className='day'>PONEDJELJAK</th>
-              <th className='day'>UTORAK</th>
-              <th className='day'>SRIJEDA</th>
-              <th className='day'>ČETVRTAK</th>
-              <th className='day'>PETAK</th>
+              {days.map((day, j) => (
+                <th key={day} className={`day ${(showCurrent && afterSchoolDay && j + 1 == currentDay) ? "current" : ""}`}>
+                  <FitText>{day}</FitText>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -410,14 +434,13 @@ export default function Classes() {
                     oldnewCellContent = turnus ? classData.oldScheduleBlue[index] : classData.oldScheduleRed[index];
                   else
                     oldnewCellContent = newCellContent;
-                  const currentTurnus = getWeekNumber() % 2 != 0 ? true : false;
 
                   let backgroundColor = "";
 
                   return (
                     <td
                       key={j}
-                      className={`${(turnus == currentTurnus && i == currentTimeSlotIndex && j + 1 == currentTime.getDay()) ? "current" : ""} ${newCellContent != oldnewCellContent ? "changed" : ""} ${backgroundColor}`}
+                      className={`${(showCurrent && !afterSchoolDay && i == currentTimeSlotIndex && j + 1 == currentDay) ? "current" : ""} ${newCellContent != oldnewCellContent ? "changed" : ""} ${backgroundColor}`}
                     >
                       {newCellContent
                         .split(";")

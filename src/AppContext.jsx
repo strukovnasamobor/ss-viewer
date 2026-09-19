@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { getCurrentTurnus } from "./utils/ScheduleTime";
 
 export const AppContext = createContext();
 
@@ -44,17 +45,9 @@ export function AppContextProvider({ children }) {
     document.body.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
-  function getWeekNumber() {
-    let currentDate = new Date();
-    currentDate.setHours(currentDate.getHours() + 52);
-    currentDate.setUTCDate(currentDate.getUTCDate() + 4 - (currentDate.getUTCDay() || 7));
-    var yearStart = new Date(Date.UTC(currentDate.getUTCFullYear(), 0, 1));
-    // @ts-ignore
-    return Math.ceil((((currentDate - yearStart) / 86400000) + 1) / 7);
-  }
-
+  // Open the app on the turnus of the next school day (flips at Friday 20:00)
   useEffect(() => {
-    getWeekNumber() % 2 != 0 ? setTurnus(true) : setTurnus(false);
+    setTurnus(getCurrentTurnus());
   }, []);
 
   useEffect(() => {
