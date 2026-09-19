@@ -169,7 +169,20 @@ body.dark .classrooms .timeslot-substitution {
     background-color: rgba(107 , 0, 179, 0.5);
 }
 
+/* Day headers: full name on larger screens, PON/UTO/... on phones */
+.classrooms .schedule-table .day-short {
+    display: none;
+}
+
 @media only screen and (max-width: 768px) {
+    .classrooms .schedule-table .day-long {
+        display: none;
+    }
+
+    .classrooms .schedule-table .day-short {
+        display: inline;
+    }
+
     .classrooms .schedule-table td {
         padding: 2px;
     }

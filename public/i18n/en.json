@@ -9,6 +9,24 @@
       "classes": "CLASSES",
       "classrooms": "CLASSROOMS"
     },
+    "days": {
+      "mon": "MON",
+      "tue": "TUE",
+      "wed": "WED",
+      "thu": "THU",
+      "fri": "FRI"
+    },
+    "daysLong": {
+      "mon": "MONDAY",
+      "tue": "TUESDAY",
+      "wed": "WEDNESDAY",
+      "thu": "THURSDAY",
+      "fri": "FRIDAY"
+    },
+    "turnusBlue": "BLUE",
+    "turnusRed": "RED",
+    "classTeacher": "class teacher",
+    "deputyClassTeacher": "deputy teacher",
     "alert": "Alert",
     "ok": "Ok",
     "close": "Close",

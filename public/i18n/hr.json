@@ -9,6 +9,24 @@
       "classes": "RAZREDI",
       "classrooms": "UČIONICE"
     },
+    "days": {
+      "mon": "PON",
+      "tue": "UTO",
+      "wed": "SRI",
+      "thu": "ČET",
+      "fri": "PET"
+    },
+    "daysLong": {
+      "mon": "PONEDJELJAK",
+      "tue": "UTORAK",
+      "wed": "SRIJEDA",
+      "thu": "ČETVRTAK",
+      "fri": "PETAK"
+    },
+    "turnusBlue": "PLAVI",
+    "turnusRed": "CRVENI",
+    "classTeacher": "razrednik",
+    "deputyClassTeacher": "zamjenik",
     "alert": "Upozorenje",
     "ok": "U redu",
     "close": "Zatvori",

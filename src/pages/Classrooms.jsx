@@ -16,7 +16,6 @@ import { useLocation } from "react-router-dom";
 import { onSnapshot, doc } from 'firebase/firestore';
 import { useContext, useEffect, useState, useRef } from 'react';
 import Loading from '../components/Loading';
-import FitText from '../components/FitText';
 import React from 'react';
 import { useSwipeable } from 'react-swipeable';
 import useArrowKeyNavigation from '../utils/useArrowKeyNavigation';
@@ -267,7 +266,7 @@ export default function Classrooms() {
     '18:20-19:05', '19:10-19:55'
   ];
 
-  const days = ['PONEDJELJAK', 'UTORAK', 'SRIJEDA', 'ČETVRTAK', 'PETAK'];
+  const days = ["mon", "tue", "wed", "thu", "fri"];
 
   const periods = [
     '1.', '2.', '3.', '4.', '5.', '6.', '7./0.', '8./1.',
@@ -381,10 +380,11 @@ export default function Classrooms() {
               </th>
             </tr>
             <tr className={`theader-${turnus ? "blue" : "red"}`}>
-              <th className='timeslot' colSpan={2}>{turnus ? "PLAVI" : "CRVENI"}</th>
+              <th className='timeslot' colSpan={2}>{turnus ? t("turnusBlue") : t("turnusRed")}</th>
               {days.map((day, j) => (
                 <th key={day} className={`day ${(showCurrent && afterSchoolDay && j + 1 == currentDay) ? "current" : ""}`}>
-                  <FitText>{day}</FitText>
+                  <span className="day-long">{t(`daysLong.${day}`)}</span>
+                  <span className="day-short">{t(`days.${day}`)}</span>
                 </th>
               ))}
             </tr>

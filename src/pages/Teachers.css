@@ -319,7 +319,20 @@ body.dark .teachers .background-yellow {
     background-color: var(--ion-color-primary);
 }
 
+/* Day headers: full name on larger screens, PON/UTO/... on phones */
+.teachers .schedule-table .day-short {
+    display: none;
+}
+
 @media only screen and (max-width: 768px) {
+    .teachers .schedule-table .day-long {
+        display: none;
+    }
+
+    .teachers .schedule-table .day-short {
+        display: inline;
+    }
+
     .teachers .schedule-table td {
         padding: 2px;
     }
