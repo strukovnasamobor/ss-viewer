@@ -1,4 +1,2 @@
 CURRENT VERSION
 Ver. 5.0.0 (9)
-
-- resize font in table header on small devices
