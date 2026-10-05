@@ -18,6 +18,20 @@
     cursor: pointer;
 }
 
+/* Long-press target: no iOS callout bar, no selection magnifier, no tap flash */
+.teachers .schedule-table .subject {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Press cue: the delay means a tap or a scroll never flashes it */
+.teachers .schedule-table .subject.pressing {
+    box-shadow: inset 0 0 0 2px var(--ion-color-secondary);
+    transition: box-shadow 250ms ease 200ms;
+}
+
 .teachers .schedule-table-container {
     width: 100%;
     height: 100%;
@@ -304,6 +318,12 @@ body.dark .teachers .background-yellow {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+/* Opened from a click or press: pinned to that point instead of centred */
+.color-picker-modal.at-pointer {
+    position: fixed;
+    margin: 0;
 }
 
 .color-picker-button {

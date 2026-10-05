@@ -14,11 +14,12 @@ import {
 } from '@ionic/react';
 import { useLocation } from "react-router-dom";
 import { onSnapshot, doc  } from 'firebase/firestore';
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useLayoutEffect, useState, useRef } from 'react';
 import Loading from '../components/Loading';
 import React from 'react';
 import { useSwipeable } from 'react-swipeable';
 import useArrowKeyNavigation from '../utils/useArrowKeyNavigation';
+import useLongPress from '../utils/useLongPress';
 import { getCurrentTurnus, getScheduleDay, isAfterSchoolDay } from '../utils/ScheduleTime';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { db } from '../../firebase';
@@ -58,12 +59,18 @@ export default function Teachers() {
   const [colorForSubject, setColorForSubject] = useState("");
   const [currentCustomColor, setCurrentCustomColor] = useState("#ffffff");
   const [customColors, setCustomColors] = useState([]);
+  // Where the picker sits: the click / press point, clamped to the viewport
+  const [pickerStyle, setPickerStyle] = useState(null);
+  const pickerRef = useRef(null);
 
-  const handleDoubleClick = (className, subject) => {
+  const handleOpenColorPicker = (className, subject, position) => {
     setColorForClassName(className);
     setColorForSubject(subject);
+    // Open at the pointer; without a position fall back to the centred layout
+    setPickerStyle(position ? { left: position.x + 8, top: position.y + 8 } : null);
     const currentColorObj = customColors.find(
-      c => c.teacherId === teacherId && c.className === className && c.subject === subject
+      c => c.teacherId === teacherId && c.isDarkMode === isDarkMode &&
+           c.className === className && c.subject === subject
     );
     const currentColor = currentColorObj ? currentColorObj.color : "#ffffff";
     setCurrentCustomColor(currentColor);
@@ -82,21 +89,23 @@ export default function Teachers() {
     };
   
     setCustomColors(prevColors => {
-      // If you want to replace color for same teacher/class/subject:
+      // Replace the color for the same teacher/theme/class/subject
       const filtered = prevColors.filter(
-        c => !(c.teacherId === teacherId && c.className === colorForClassName && c.subject === colorForSubject)
+        c => !(c.teacherId === teacherId && c.isDarkMode === isDarkMode &&
+               c.className === colorForClassName && c.subject === colorForSubject)
       );
-      return [...filtered, newColorObj];
+      const next = [...filtered, newColorObj];
+      // Save to local storage
+      localStorage.setItem("customColors", JSON.stringify(next));
+      return next;
     });
-
-    // Save to local storage
-    localStorage.setItem("customColors", JSON.stringify(customColors));
   };
 
   const handleReset = () => {
     setCustomColors(prevColors => {
       const filtered = prevColors.filter(
-        c => !(c.teacherId === teacherId && c.className === colorForClassName && c.subject === colorForSubject)
+        c => !(c.teacherId === teacherId && c.isDarkMode === isDarkMode &&
+               c.className === colorForClassName && c.subject === colorForSubject)
       );
       // Save to local storage
       localStorage.setItem("customColors", JSON.stringify(filtered));
@@ -112,6 +121,17 @@ export default function Teachers() {
   const handleClose = () => {
     setShowColorPicker(false);
   };
+
+  // Nudge the picker back inside the viewport when it was opened near an edge
+  useLayoutEffect(() => {
+    const modal = pickerRef.current;
+    if (!showColorPicker || !modal || !pickerStyle) return;
+    const margin = 8;
+    const { width, height } = modal.getBoundingClientRect();
+    const left = Math.max(margin, Math.min(pickerStyle.left, window.innerWidth - width - margin));
+    const top = Math.max(margin, Math.min(pickerStyle.top, window.innerHeight - height - margin));
+    if (left !== pickerStyle.left || top !== pickerStyle.top) setPickerStyle({ left, top });
+  }, [showColorPicker, pickerStyle]);
 
   useEffect(() => {
     const storedCustomColors = localStorage.getItem("customColors");
@@ -346,6 +366,9 @@ export default function Teachers() {
     navigateToCard
   );
 
+  // Touch devices open the colour picker with a 500 ms press instead of a double click
+  const longPressProps = useLongPress(handleOpenColorPicker, 500);
+
   const timeSlots = [
     '08:00-08:45', '08:50-09:35', '09:40-10:25', '10:40-11:25',
     '11:30-12:15', '12:20-13:05', '13:10-13:55', '14:00-14:45',
@@ -439,40 +462,21 @@ export default function Teachers() {
                 {originalClassroomPart}
               </span>
             </div>
-            <div>
             <div
               className="subject"
-              onDoubleClick={(e) => handleDoubleClick(originalClassPart, originalSubject)}
+              {...longPressProps(originalClassPart, originalSubject)}
+              onDoubleClick={
+                isTouchDevice
+                  ? undefined
+                  : (event) => handleOpenColorPicker(
+                      originalClassPart,
+                      originalSubject,
+                      { x: event.clientX, y: event.clientY }
+                    )
+              }
             >
               {originalSubject}
             </div>
-            {showColorPicker && (
-              <div className="color-picker-overlay" onClick={handleClose}>
-                <div className="color-picker-modal" onClick={(e) => e.stopPropagation()}>
-                  <label>
-                    {t("selectColor")}
-                    <input
-                      type="color"
-                      value={currentCustomColor?.color || "#ffffff"}
-                      onInput={handleColorChange}
-                    />
-                  </label>
-
-                  <button className="color-picker-button" onClick={handleReset}>
-                    {t("reset")}
-                  </button>
-
-                  <button className="color-picker-button" onClick={handleResetAll}>
-                    {t("resetAll")}
-                  </button>
-
-                  <button className="color-picker-button" onClick={handleClose}>
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
           </div>
           <div className="timeslot-substitution">
             {(substitutionClassAndClassroom &&
@@ -728,6 +732,37 @@ export default function Teachers() {
             }
           </IonRow>
         </IonGrid>
+      )}
+      {showColorPicker && (
+        <div className="color-picker-overlay" onClick={handleClose}>
+          <div
+            className={`color-picker-modal${pickerStyle ? " at-pointer" : ""}`}
+            ref={pickerRef}
+            style={pickerStyle ?? undefined}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <label>
+              {t("selectColor")}
+              <input
+                type="color"
+                value={currentCustomColor || "#ffffff"}
+                onInput={handleColorChange}
+              />
+            </label>
+
+            <button className="color-picker-button" onClick={handleReset}>
+              {t("reset")}
+            </button>
+
+            <button className="color-picker-button" onClick={handleResetAll}>
+              {t("resetAll")}
+            </button>
+
+            <button className="color-picker-button" onClick={handleClose}>
+              {t("close")}
+            </button>
+          </div>
+        </div>
       )}
     </PageLayout>
   );
