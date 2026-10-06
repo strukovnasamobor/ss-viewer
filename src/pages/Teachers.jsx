@@ -20,7 +20,7 @@ import React from 'react';
 import { useSwipeable } from 'react-swipeable';
 import useArrowKeyNavigation from '../utils/useArrowKeyNavigation';
 import useLongPress from '../utils/useLongPress';
-import { getCurrentTurnus, getScheduleDay, isAfterSchoolDay } from '../utils/ScheduleTime';
+import { getCurrentTurnus, getScheduleDay, isOutsideSchoolDay } from '../utils/ScheduleTime';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { db } from '../../firebase';
 import { useTranslation } from 'react-i18next';
@@ -559,9 +559,9 @@ export default function Teachers() {
 
     const currentTimeSlotIndex = getCurrentTimeSlotIndex();
     // "current" marker: only while the displayed turnus is the one in effect.
-    // After 20:00 (or on the weekend) it moves to the header of the next school day.
+    // Outside school hours (20:00 - 7:55, or on the weekend) it marks the header of the school day.
     const showCurrent = turnus == getCurrentTurnus(currentTime);
-    const afterSchoolDay = isAfterSchoolDay(currentTime);
+    const outsideSchoolDay = isOutsideSchoolDay(currentTime);
     const currentDay = getScheduleDay(currentTime);
   
     return (
@@ -592,7 +592,7 @@ export default function Teachers() {
             <tr className={`theader-${turnus ? "blue" : "red"}`}>
               <th className='timeslot' colSpan={2}>{turnus ? t("turnusBlue") : t("turnusRed")}</th>
               {days.map((day, j) => (
-                <th key={day} className={`day ${(showCurrent && afterSchoolDay && j + 1 == currentDay) ? "current" : ""}`}>
+                <th key={day} className={`day ${(showCurrent && outsideSchoolDay && j + 1 == currentDay) ? "current" : ""}`}>
                   <span className="day-long">{t(`daysLong.${day}`)}</span>
                   <span className="day-short">{t(`days.${day}`)}</span>
                 </th>
@@ -665,7 +665,7 @@ export default function Teachers() {
                   return (
                     <td
                       key={j}
-                      className={`${(showCurrent && !afterSchoolDay && i == currentTimeSlotIndex && j + 1 == currentDay) ? "current" : ""} ${newCellContent != oldnewCellContent ? "changed" : ""} ${backgroundColor}`}
+                      className={`${(showCurrent && !outsideSchoolDay && i == currentTimeSlotIndex && j + 1 == currentDay) ? "current" : ""} ${newCellContent != oldnewCellContent ? "changed" : ""} ${backgroundColor}`}
                       style={{backgroundColor: customBackgroundColor}}
                     >
                       {formatnewCellContent(newCellContent)}

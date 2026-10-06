@@ -1,7 +1,9 @@
 // The school day ends at 20:00. After that the app already looks at the next
 // school day, and after Friday 20:00 (or on the weekend) at Monday of the next
-// week, i.e. the next turnus.
+// week, i.e. the next turnus. The school day starts at 7:55.
 const DAY_END_HOUR = 20;
+const DAY_START_HOUR = 7;
+const DAY_START_MINUTE = 55;
 
 function startOfNextDay(date) {
   const next = new Date(date);
@@ -18,11 +20,14 @@ export function getScheduleDate(now = new Date()) {
   return date;
 }
 
-// True once today's school day is over (after 20:00 or on the weekend): the
-// "current" marker then moves to the day header of the next school day.
-export function isAfterSchoolDay(now = new Date()) {
+// True outside school hours (20:00 - 7:55, or on the weekend): the "current"
+// marker then sits on the day header of the school day being shown.
+export function isOutsideSchoolDay(now = new Date()) {
   const day = now.getDay();
-  return now.getHours() >= DAY_END_HOUR || day === 0 || day === 6;
+  const hour = now.getHours();
+  const beforeStart = hour < DAY_START_HOUR ||
+    (hour === DAY_START_HOUR && now.getMinutes() < DAY_START_MINUTE);
+  return hour >= DAY_END_HOUR || beforeStart || day === 0 || day === 6;
 }
 
 // ISO 8601 week number of a local calendar date.
