@@ -8,15 +8,15 @@ export function AppContextProvider({ children }) {
   const [turnus, setTurnus] = useState(true);
   const [teachersData, setTeachersData] = useState([]);
   const [teacherId, setTeacherId] = useState(null);
-  const [savedTeacherId, setSavedTeacherId] = useState(null);
+  const [savedTeacherId, setSavedTeacherId] = useState(() => localStorage.getItem("teacherId"));
   const [teachersSearchInput, setTeachersSearchInput] = useState("");
   const [classesData, setClassesData] = useState([]);
   const [classId, setClassId] = useState(null);
-  const [savedClassId, setSavedClassId] = useState(null);
+  const [savedClassId, setSavedClassId] = useState(() => localStorage.getItem("classId"));
   const [classesSearchInput, setClassesSearchInput] = useState("");
   const [classroomsData, setClassroomsData] = useState([]);
   const [classroomId, setClassroomId] = useState(null);
-  const [savedClassroomId, setSavedClassroomId] = useState(null);
+  const [savedClassroomId, setSavedClassroomId] = useState(() => localStorage.getItem("classroomId"));
   const [classroomsSearchInput, setClassroomsSearchInput] = useState("");
 
   const [isDarkModeStored, setIsDarkModeStored] = useState(() => {

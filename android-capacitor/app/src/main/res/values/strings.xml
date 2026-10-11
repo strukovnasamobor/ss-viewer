@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SS Viewer</string>
+    <string name="title_activity_main">SS Viewer</string>
+    <string name="package_name">com.strukovnasamobor.ssviewer_ucenici.twa</string>
+    <string name="custom_url_scheme">com.strukovnasamobor.ssviewer_ucenici.twa</string>
+</resources>

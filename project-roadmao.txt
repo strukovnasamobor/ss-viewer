@@ -1,2 +1,2 @@
 CURRENT VERSION
-Ver. 5.0.0 (9)
+Ver. 6.0.0 (10)

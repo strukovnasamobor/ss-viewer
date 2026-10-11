@@ -14,7 +14,7 @@ import {
 } from '@ionic/react';
 import { useLocation } from "react-router-dom";
 import { onSnapshot, doc } from 'firebase/firestore';
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Loading from '../components/Loading';
 import React from 'react';
 import { useSwipeable } from 'react-swipeable';
@@ -25,7 +25,6 @@ import { db } from '../../firebase';
 import { useTranslation } from 'react-i18next';
 import isTeacherHost from "../utils/TeacherHost";
 import { parseScheduleJson } from "../utils/ParseScheduleJson";
-import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from '../utils/VapidKeyPulic';
 
 export default function Classrooms() {
   const {
@@ -35,7 +34,6 @@ export default function Classrooms() {
     setClassroomsData,
     classroomId,
     setClassroomId,
-    savedClassroomId,
     setSavedClassroomId,
     classroomsSearchInput,
     setClassroomsSearchInput
@@ -49,7 +47,6 @@ export default function Classrooms() {
   const queryParams = new URLSearchParams(location.search);
   const classroomIdParam = queryParams.get("id");
   const classroomIdFromStorage = localStorage.getItem("classroomId");
-  const prevClassroomIdRef = useRef();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -118,114 +115,6 @@ export default function Classrooms() {
 
     return () => unsubscribeSchedulesClassrooms();
   }, []);
-
-  useEffect(() => {
-    const prevClassroomId = prevClassroomIdRef.current;
-
-    if (savedClassroomId !== prevClassroomId) {
-      // If there was a previous classroomId, delete its doc
-      if (prevClassroomId) {
-        unsubscribeClassroomNotification(prevClassroomId);
-      }
-
-      // If we have a new classroomId
-      if (savedClassroomId) {
-        subscribeClassroomNotification(savedClassroomId);
-      }
-    }
-
-    // Update ref for next render
-    prevClassroomIdRef.current = savedClassroomId;
-  }, [savedClassroomId]);
-
-  const unsubscribeClassroomNotification = async (classroomId) => {
-    console.log(`Classrooms > unsubscribeClassNotification > Unsubscribe classrooms_${classroomId}`);
-
-    try {
-      // Ensure service worker is ready
-      const registration = await navigator.serviceWorker.ready;
-
-      // Get current subscription
-      const subscription = await registration.pushManager.getSubscription();
-
-      if (!subscription) {
-        console.log("Classrooms > No active subscription found.");
-        return;
-      }
-
-      // Tell backend to remove subscription
-      const response = await fetch("https://ss-viewer-notifs-api.onrender.com/classroom/unsubscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          classroomId: classroomId,
-          subscription: subscription,
-        }),
-      });
-
-      if (response.ok) {
-        console.log(`[UNSUBSCRIBED] classrooms_${classroomId}`);
-
-        // Also unsubscribe locally (browser side)
-        await subscription.unsubscribe();
-        console.log("Classrooms > Local push subscription removed.");
-      } else {
-        console.error("Classrooms > Failed to unsubscribe", await response.text());
-      }
-
-    } catch (error) {
-      console.error("Classrooms > unsubscribeClassroomNotification > Error:", error);
-    }
-  };
-
-  const subscribeClassroomNotification = async (classroomId) => {
-    console.log("Classrooms > subscribeClassNotification");
-
-    try {
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        console.log("Classrooms > subscribeClassroomNotification > Notification permission denied.");
-        return;
-      }
-
-      console.log("Classrooms > Notification permission granted.");
-
-      // Ensure service worker is ready
-      const registration = await navigator.serviceWorker.ready;
-
-      // Subscribe for push notifications
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-      });
-
-      console.log("Classrooms > Subscription payload:", { classroomId, subscription });
-
-      // Send subscription to backend
-      const response = await fetch("https://ss-viewer-notifs-api.onrender.com/classroom/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          classroomId: classroomId,
-          subscription: subscription,
-        }),
-      });
-
-      if (response.ok) {
-        console.log(`[SUBSCRIBED] classrooms_${classroomId}`);
-      } else {
-        console.error("Classrooms > Failed to save subscription", await response.text());
-      }
-
-    } catch (error) {
-      console.error("Classrooms > subscribeClassroomNotification > Error:", error);
-    }
-  };
 
   const handleCardOnClick = (classroomId) => (event) => {
     setClassroomsSearchInput("");

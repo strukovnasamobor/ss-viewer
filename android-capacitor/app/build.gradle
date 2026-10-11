@@ -1,0 +1,95 @@
+apply plugin: 'com.android.application'
+
+// Release signing (same upload key as the old TWA): android-capacitor/keystore.properties
+// (storeFile, storePassword, keyAlias, keyPassword) or, if absent, .google_play/signing-key-info.txt
+def signingProps = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+def googlePlayDir = rootProject.file('../.google_play')
+def signingInfoFile = new File(googlePlayDir, 'signing-key-info.txt')
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { signingProps.load(it) }
+} else if (signingInfoFile.exists()) {
+    def fields = [:]
+    signingInfoFile.eachLine { line ->
+        def separator = line.indexOf(':')
+        if (separator > 0) {
+            fields[line.substring(0, separator).trim()] = line.substring(separator + 1).trim()
+        }
+    }
+    signingProps['storeFile'] = new File(googlePlayDir, fields['Key store file'] ?: 'signing.keystore').path
+    signingProps['storePassword'] = fields['Key store password']
+    signingProps['keyAlias'] = fields['Key alias']
+    signingProps['keyPassword'] = fields['Key password']
+}
+def hasReleaseSigning = signingProps['storeFile'] && rootProject.file(signingProps['storeFile']).exists()
+
+android {
+    namespace = "com.strukovnasamobor.ssviewer_ucenici.twa"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.strukovnasamobor.ssviewer_ucenici.twa"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        // Must stay above the last TWA release (versionCode 9, 5.0.0)
+        versionCode 10
+        versionName "6.0.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile rootProject.file(signingProps['storeFile'])
+                storePassword signingProps['storePassword']
+                keyAlias signingProps['keyAlias']
+                keyPassword signingProps['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        release {
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    // Provides WebSettingsCompat — used in MainActivity.java to disable
+    // force-dark on the WebView so Samsung's "Sync with device theme" can't
+    // recolor the page.
+    implementation "androidx.webkit:webkit:1.10.0"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

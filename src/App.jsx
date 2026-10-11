@@ -6,6 +6,7 @@ import {getConfig, useIonRouter, IonTabs, IonTabBar, IonTabButton, IonLabel, Ion
 import { calendarOutline, schoolOutline, easelOutline } from "ionicons/icons";
 import { useTranslation } from 'react-i18next';
 import isTeacherHost from "./utils/TeacherHost";
+import { useNotificationSubscription, useNotificationTap } from "./utils/Notifications";
 
 import Teachers from "./pages/Teachers";
 import Classes from "./pages/Classes";
@@ -26,6 +27,22 @@ export default function App() {
   const location = useLocation();
   const config = getConfig();
   config.set('animated', false);
+
+  // Push notifications for saved teacher, class and classroom
+  useNotificationSubscription("teacher", savedTeacherId);
+  useNotificationSubscription("class", savedClassId);
+  useNotificationSubscription("classroom", savedClassroomId);
+
+  // Native app: open the changed schedule when a notification is tapped
+  useNotificationTap(({ entity, id }) => {
+    const savedIds = {
+      teachers: savedTeacherId,
+      classes: savedClassId,
+      classrooms: savedClassroomId,
+    };
+    const targetId = id || savedIds[entity];
+    router.push(targetId ? `/${entity}?id=${encodeURIComponent(targetId)}` : `/${entity}`, "forward");
+  });
 
   const normalizedPath = location.pathname.replace(/\/$/, "");
   let isActiveTabTeacher;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "100099618358",
+    "project_id": "ss-viewer-notifs",
+    "storage_bucket": "ss-viewer-notifs.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100099618358:android:4357b3a391505d74848a97",
+        "android_client_info": {
+          "package_name": "com.strukovnasamobor.ssviewer_ucenici.twa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYCwRosN_hf0pjpVmg0wpaTi9_0s91l48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

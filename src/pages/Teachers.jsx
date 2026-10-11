@@ -24,7 +24,6 @@ import { getCurrentTurnus, getScheduleDay, isOutsideSchoolDay } from '../utils/S
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { db } from '../../firebase';
 import { useTranslation } from 'react-i18next';
-import {VAPID_PUBLIC_KEY, urlBase64ToUint8Array} from '../utils/VapidKeyPulic';
 import { parseScheduleJson } from '../utils/ParseScheduleJson';
 
 export default function Teachers() {
@@ -36,7 +35,6 @@ export default function Teachers() {
     setTeachersData,
     teacherId,
     setTeacherId,
-    savedTeacherId,
     setSavedTeacherId,
     teachersSearchInput,
     setTeachersSearchInput
@@ -51,7 +49,6 @@ export default function Teachers() {
   const teacherIdParam = queryParams.get("id");
   const teacherNameParam = queryParams.get("name");
   const teacherIdFromStorage = localStorage.getItem("teacherId");
-  const prevTeacherIdRef = useRef();
   const { t } = useTranslation();
 
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -225,114 +222,6 @@ export default function Teachers() {
 
     return () => unsubscribeSchedulesTeachers();
   }, []);
-
-  useEffect(() => {
-    const prevTeacherId = prevTeacherIdRef.current;
-
-    if (savedTeacherId !== prevTeacherId) {
-      // If there was a previous teacherId, delete its doc
-      if (prevTeacherId) {
-        unsubscribeTeacherNotification(prevTeacherId);
-      }
-
-      // If we have a new teacherId
-      if (savedTeacherId) {
-        subscribeTeacherNotification(savedTeacherId);
-      }
-    }
-
-    // Update ref for next render
-    prevTeacherIdRef.current = savedTeacherId;
-  }, [savedTeacherId]);
-
-  const unsubscribeTeacherNotification = async (teacherId) => {
-    console.log(`Teachers > unsubscribeTeacherNotification > Unsubscribe teachers_${teacherId}`);
-  
-    try {
-      // Ensure service worker is ready
-      const registration = await navigator.serviceWorker.ready;
-  
-      // Get current subscription
-      const subscription = await registration.pushManager.getSubscription();
-  
-      if (!subscription) {
-        console.log("Teachers > No active subscription found.");
-        return;
-      }
-  
-      // Tell backend to remove subscription
-      const response = await fetch("https://ss-viewer-notifs-api.onrender.com/teacher/unsubscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          teacherId: teacherId,
-          subscription: subscription,
-        }),
-      });
-  
-      if (response.ok) {
-        console.log(`[UNSUBSCRIBED] teachers_${teacherId}`);
-  
-        // Also unsubscribe locally (browser side)
-        await subscription.unsubscribe();
-        console.log("Teachers > Local push subscription removed.");
-      } else {
-        console.error("Teachers > Failed to unsubscribe", await response.text());
-      }
-  
-    } catch (error) {
-      console.error("Teachers > unsubscribeTeacherNotification > Error:", error);
-    }
-  };  
-
-  const subscribeTeacherNotification = async (teacherId) => {
-    console.log("Teachers > subscribeTeacherNotification");
-  
-    try {
-      const permission = await Notification.requestPermission();
-  
-      if (permission !== "granted") {
-        console.log("Teachers > subscribeTeacherNotification > Notification permission denied.");
-        return;
-      }
-  
-      console.log("Teachers > Notification permission granted.");
-
-      // Ensure service worker is ready
-      const registration = await navigator.serviceWorker.ready;
-  
-      // Subscribe for push notifications
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-      });
-  
-      console.log("Teachers > Subscription payload:", {teacherId, subscription});
-  
-      // Send subscription to backend
-      const response = await fetch("https://ss-viewer-notifs-api.onrender.com/teacher/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          teacherId: teacherId,
-          subscription: subscription,
-        }),
-      });
-  
-      if (response.ok) {
-        console.log(`[SUBSCRIBED] teachers_${teacherId}`);
-      } else {
-        console.error("Teachers > Failed to save subscription", await response.text());
-      }
-  
-    } catch (error) {
-      console.error("Teachers > subscribeTeacherNotification > Error:", error);
-    }
-  };  
 
   const handleCardOnClick = (teacherId) => (event) => {
     setTeachersSearchInput("");
