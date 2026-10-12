@@ -1,2 +1,5 @@
 CURRENT VERSION
-Ver. 6.0.0 (10)
+Ver. 6.0.0 (android: 10, ios: 1)
+
+- new app id for android (hr.strukovnasamobor.ssviewer)
+- same app unlock password for teachers
