@@ -68,7 +68,7 @@
 	<true/>
 	<key>WKAppBoundDomains</key>
     <array>
-        <string>raspored.strukovnasamobor.web.app</string>
+        <string>raspored.strukovnasamobor.hr</string>
     </array>
 	<key>ITSAppUsesNonExemptEncryption</key>
     <false/>
