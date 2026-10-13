@@ -17,12 +17,13 @@ const ID_KEYS = {
 // Notification data.entity -> route
 const ENTITY_ROUTES = ["teachers", "classes", "classrooms"];
 
-// True only inside the Capacitor Android app, false in the browser and in the TWA
+// True only inside the Capacitor Android and iOS apps, false in the browser and in the TWA
 const isNative = Capacitor.isNativePlatform();
 
 let fcmTokenPromise;
 
-// Native: ask for permission, create the channel and register with FCM (once per app start)
+// Native: ask for permission, create the channel (Android only) and register with FCM (once per app start).
+// On iOS, AppDelegate swaps the APNs token for an FCM token before it reaches the "registration" listener
 function getFcmToken() {
   if (!fcmTokenPromise) {
     fcmTokenPromise = (async () => {
@@ -34,11 +35,13 @@ function getFcmToken() {
         throw new Error("Notification permission denied.");
       }
 
-      await PushNotifications.createChannel({
-        id: NOTIFICATION_CHANNEL_ID,
-        name: "Promjene rasporeda",
-        importance: 4,
-      });
+      if (Capacitor.getPlatform() === "android") {
+        await PushNotifications.createChannel({
+          id: NOTIFICATION_CHANNEL_ID,
+          name: "Promjene rasporeda",
+          importance: 4,
+        });
+      }
 
       let listeners = [];
       return new Promise((resolve, reject) => {
