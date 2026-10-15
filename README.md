@@ -9,6 +9,9 @@ Web App:<br>https://raspored.strukovnasamobor.hr<br><br>
 <a href="https://play.google.com/store/apps/details?id=com.strukovnasamobor.ssviewer_ucenici.twa" target="_blank">
   <img src="public/images/google_play_badge.png" height="40" alt="Get It On Google Play"/>
 </a>
+<a href="https://apps.apple.com/us/app/ss-viewer/id6822064708" target="_blank">
+  <img src="public/images/app_store_badge.png" height="40" alt="Download On The App Store"/>
+</a>
 
 ## License
 
