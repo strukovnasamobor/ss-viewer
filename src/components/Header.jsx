@@ -203,34 +203,52 @@ export default function Header() {
         <Switch>
           <Route exact path={isTeacherHost ? ["/", "/teachers"] : ["/teachers"]}>
             <div className="header-search">
-              <TeachersSearch/>
+              <TeachersSearch />
             </div>
-            <button className={`icon-button ${teacherId == null ? 'disabled' : ''} ${teacherId === savedTeacherId ? 'saved' : ''}`} onClick={handleTeachersSaveButtonClick}>
+            <button
+              className={`icon-button ${teacherId == null ? "disabled" : ""} ${teacherId === savedTeacherId ? "saved" : ""}`}
+              onClick={handleTeachersSaveButtonClick}
+            >
               <IonIcon icon={saveOutline} />
             </button>
-            <button className={`icon-button ${savedTeacherId == null ? 'disabled' : ''}`}  onClick={handleTeachersResetButtonClick}>
+            <button
+              className={`icon-button ${savedTeacherId == null ? "disabled" : ""}`}
+              onClick={handleTeachersResetButtonClick}
+            >
               <IonIcon icon={homeOutline} />
             </button>
           </Route>
           <Route exact path={!isTeacherHost ? ["/", "/classes"] : ["/classes"]}>
             <div className="header-search">
-              <ClassesSearch/>
+              <ClassesSearch />
             </div>
-            <button className={`icon-button ${classId == null ? 'disabled' : ''} ${classId === savedClassId ? 'saved' : ''}`} onClick={handleClassesSaveButtonClick}>
+            <button
+              className={`icon-button ${classId == null ? "disabled" : ""} ${classId === savedClassId ? "saved" : ""}`}
+              onClick={handleClassesSaveButtonClick}
+            >
               <IonIcon icon={saveOutline} />
             </button>
-            <button className={`icon-button ${savedClassId == null ? 'disabled' : ''}`}  onClick={handleClassesResetButtonClick}>
+            <button
+              className={`icon-button ${savedClassId == null ? "disabled" : ""}`}
+              onClick={handleClassesResetButtonClick}
+            >
               <IonIcon icon={homeOutline} />
             </button>
           </Route>
           <Route exact path={["/classrooms"]}>
             <div className="header-search">
-              <ClassroomsSearch/>
+              <ClassroomsSearch />
             </div>
-            <button className={`icon-button ${classroomId == null ? 'disabled' : ''} ${classroomId === savedClassroomId ? 'saved' : ''}`} onClick={handleClassroomsSaveButtonClick}>
+            <button
+              className={`icon-button ${classroomId == null ? "disabled" : ""} ${classroomId === savedClassroomId ? "saved" : ""}`}
+              onClick={handleClassroomsSaveButtonClick}
+            >
               <IonIcon icon={saveOutline} />
             </button>
-            <button className={`icon-button ${savedClassroomId == null ? 'disabled' : ''}`}  onClick={handleClassroomsResetButtonClick}>
+            <button
+              className={`icon-button ${savedClassroomId == null ? "disabled" : ""}`}
+              onClick={handleClassroomsResetButtonClick}
+            >
               <IonIcon icon={homeOutline} />
             </button>
           </Route>
@@ -325,6 +343,17 @@ export default function Header() {
                 <div
                   className="dropdown-item"
                   onClick={() => {
+                    window.open("http://tiny.cc/ss-zavrsni", "_blank");
+                    toggleDropdown();
+                  }}
+                >
+                  {t("finalProject")}
+                </div>
+              )}
+              {isTeacherHost && (
+                <div
+                  className="dropdown-item"
+                  onClick={() => {
                     window.open("http://tiny.cc/ss-zaduzenja", "_blank");
                     toggleDropdown();
                   }}
@@ -407,16 +436,14 @@ export default function Header() {
                 {t("floorPlan")}
               </div>
               <div className="dropdown-item" onClick={toggleDarkMode}>
-                {isDarkMode ? (
-                  <>{t("lightMode")}</>
-                ) : (
-                  <>{t("darkMode")}</>
-                )}
+                {isDarkMode ? <>{t("lightMode")}</> : <>{t("darkMode")}</>}
               </div>
               <div className="dropdown-item" onClick={changeLanguage}>
                 {t("changeLanguage")}
               </div>
-              <div className="dropdown-item" id="present-about" onClick={toggleDropdown}>{t("about")}</div>
+              <div className="dropdown-item" id="present-about" onClick={toggleDropdown}>
+                {t("about")}
+              </div>
               <IonAlert
                 trigger="present-about"
                 header="SS VIEWER"
