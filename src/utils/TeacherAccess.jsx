@@ -1,6 +1,7 @@
 import { doc, getDocFromServer } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { isRasHost, getTeacherKey, TEACHER_KEY_STORAGE } from './TeacherHost';
+import { unsubscribeNow } from './Notifications';
 
 // Firestore: teacherAccess/<sha256 of PIN> = { key }, teacherKeys/<key> exists while the key is valid.
 // Both are written by scripts/set-teacher-pin.mjs; changing the PIN deletes the old keys
@@ -35,11 +36,18 @@ export async function unlockTeacherView(pin) {
   return true;
 }
 
-export function lockTeacherView() {
+// Student view can't unsave a teacher, so the saved teacher and its notifications go too
+export async function lockTeacherView() {
+  let savedTeacherId = null;
   try {
+    savedTeacherId = localStorage.getItem("teacherId");
+    localStorage.removeItem("teacherId");
     localStorage.removeItem(TEACHER_KEY_STORAGE);
   } catch {
-    // Storage unavailable, so no key was saved either
+    // Storage unavailable, so nothing was saved either
+  }
+  if (savedTeacherId) {
+    await unsubscribeNow("teacher", savedTeacherId);
   }
   reloadApp();
 }

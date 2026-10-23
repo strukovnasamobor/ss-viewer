@@ -60,7 +60,7 @@
     "changeLanguage": "Change language",
     "teacherView": "Teacher View",
     "studentView": "Student View",
-    "enterPin": "Enter the 4-digit teacher PIN.",
+    "enterPin": "Enter the PIN for teachers.",
     "wrongPin": "Wrong PIN.",
     "checkConnection": "Could not check the PIN. Check your internet connection.",
     "lightMode": "Light Mode",

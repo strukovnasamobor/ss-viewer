@@ -178,6 +178,15 @@ async function unsubscribeNotification(entity, id) {
 const entityQueues = {};
 function enqueue(entity, task) {
   entityQueues[entity] = (entityQueues[entity] || Promise.resolve()).then(task);
+  return entityQueues[entity];
+}
+
+// Unsubscribes outside React, e.g. right before a reload. Waits at most timeoutMs, so an offline device isn't stuck
+export function unsubscribeNow(entity, id, timeoutMs = 5000) {
+  return Promise.race([
+    enqueue(entity, () => unsubscribeNotification(entity, id)),
+    new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+  ]);
 }
 
 // Keeps the server subscription in sync with the saved id of one entity

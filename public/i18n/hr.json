@@ -60,7 +60,7 @@
     "changeLanguage": "Promijeni jezik",
     "teacherView": "Nastavnički prikaz",
     "studentView": "Učenički prikaz",
-    "enterPin": "Unesite 4-znamenkasti PIN za nastavnike.",
+    "enterPin": "Unesite PIN za nastavnike.",
     "wrongPin": "Pogrešan PIN.",
     "checkConnection": "Provjera PIN-a nije uspjela. Provjerite internetsku vezu.",
     "lightMode": "Svijetli način",
