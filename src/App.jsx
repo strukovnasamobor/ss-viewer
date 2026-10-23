@@ -1,12 +1,13 @@
 import "./App.css";
 import { AppContext } from "./AppContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import {Route, useLocation} from "react-router-dom";
 import {getConfig, useIonRouter, IonTabs, IonTabBar, IonTabButton, IonLabel, IonIcon, IonRouterOutlet } from "@ionic/react";
 import { calendarOutline, schoolOutline, easelOutline } from "ionicons/icons";
 import { useTranslation } from 'react-i18next';
 import isTeacherHost from "./utils/TeacherHost";
 import { useNotificationSubscription, useNotificationTap } from "./utils/Notifications";
+import { validateTeacherKey } from "./utils/TeacherAccess";
 
 import Teachers from "./pages/Teachers";
 import Classes from "./pages/Classes";
@@ -27,6 +28,11 @@ export default function App() {
   const location = useLocation();
   const config = getConfig();
   config.set('animated', false);
+
+  // Teacher view unlocked by PIN: drop back to student view if the saved key was revoked
+  useEffect(() => {
+    validateTeacherKey();
+  }, []);
 
   // Push notifications for saved teacher, class and classroom
   useNotificationSubscription("teacher", savedTeacherId);

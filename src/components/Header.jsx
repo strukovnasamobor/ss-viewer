@@ -3,13 +3,14 @@ import { AppContext } from "../AppContext";
 import { menuOutline, saveOutline, homeOutline, swapHorizontalOutline } from "ionicons/icons";
 import { useContext, useState, useEffect, useRef } from "react";
 import { useTranslation } from 'react-i18next';
-import { useIonRouter, IonHeader, IonIcon, IonButton, IonButtons, IonAlert } from "@ionic/react";
+import { useIonRouter, useIonAlert, IonHeader, IonIcon, IonButton, IonButtons, IonAlert } from "@ionic/react";
 import { Route, Switch } from 'react-router';
 import { useLocation} from "react-router-dom";
 import TeachersSearch from "./TeachersSearch";
 import ClassesSearch from "./ClassesSearch";
 import ClassroomsSearch from "./ClassroomsSearch";
-import isTeacherHost from "..//utils/TeacherHost";
+import isTeacherHost, { isRasHost } from "../utils/TeacherHost";
+import { unlockTeacherView, lockTeacherView } from "../utils/TeacherAccess";
 
 export default function Header() {
   const {
@@ -30,6 +31,7 @@ export default function Header() {
   const router = useIonRouter();
   const { t, i18n } = useTranslation();
   const location = useLocation();
+  const [presentAlert] = useIonAlert();
 
   function toggleDropdown() {
     setIsDropdownOpen((prev) => !prev);
@@ -122,6 +124,38 @@ export default function Header() {
     } else {
       i18n.changeLanguage("hr");
     }
+  }
+
+  // Asks for the teachers' PIN. A correct PIN reloads the app in teacher view
+  function handleTeacherViewClick() {
+    toggleDropdown();
+    presentAlert({
+      header: t("teacherView"),
+      message: t("enterPin"),
+      inputs: [
+        {
+          name: "pin",
+          type: "password",
+          attributes: { inputmode: "numeric", maxlength: 4, autocomplete: "off" },
+        },
+      ],
+      buttons: [
+        { text: t("cancel"), role: "cancel" },
+        {
+          text: t("ok"),
+          handler: ({ pin }) => {
+            unlockTeacherView((pin || "").trim())
+              .then((unlocked) => {
+                if (!unlocked) presentAlert({ header: t("teacherView"), message: t("wrongPin"), buttons: [t("ok")] });
+              })
+              .catch((error) => {
+                console.error("Header > unlockTeacherView() > Error:", error);
+                presentAlert({ header: t("teacherView"), message: t("checkConnection"), buttons: [t("ok")] });
+              });
+          },
+        },
+      ],
+    });
   }
 
   const handleTeachersNavClick = () => {
@@ -435,11 +469,16 @@ export default function Header() {
               >
                 {t("floorPlan")}
               </div>
-              <div className="dropdown-item" onClick={toggleDarkMode}>
-                {isDarkMode ? <>{t("lightMode")}</> : <>{t("darkMode")}</>}
-              </div>
+              {!isRasHost && (
+                <div className="dropdown-item" onClick={isTeacherHost ? lockTeacherView : handleTeacherViewClick}>
+                  {isTeacherHost ? t("studentView") : t("teacherView")}
+                </div>
+              )}
               <div className="dropdown-item" onClick={changeLanguage}>
                 {t("changeLanguage")}
+              </div>
+              <div className="dropdown-item" onClick={toggleDarkMode}>
+                {isDarkMode ? <>{t("lightMode")}</> : <>{t("darkMode")}</>}
               </div>
               <div className="dropdown-item" id="present-about" onClick={toggleDropdown}>
                 {t("about")}

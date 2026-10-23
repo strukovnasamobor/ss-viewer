@@ -8,6 +8,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "firebase:config": "node scripts/write-firebase-config.mjs",
+    "teacher:pin": "node scripts/set-teacher-pin.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
