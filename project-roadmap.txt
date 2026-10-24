@@ -1,0 +1,9 @@
+CURRENT VERSION
+Ver. 6.0.0 (android: 10, ios: 2)
+
+Zaštita rasporeda nastavnika i domene ras.strukovnasamobor.hr
+- Protected data: the teacher timetable, the student-list links and the teacher menu links move to private/<key>. The rules allow reading only by exact ID, so only a device with the PIN key in localStorage can read them.
+- Public data: schedules/classes and schedules/classrooms stay public, without class_list_link. schedules/teachers becomes unreadable for the app.
+- Your script: looks up the current key and writes the teacher data to private/<key>.
+- set-teacher-pin: when you change the PIN, it moves the private data to the new key, so the old key stops working at once.
+- ras. site: it also needs the key, otherwise anyone with the address still sees everything. Teachers there would enter the PIN once too.
