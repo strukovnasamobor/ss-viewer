@@ -7,3 +7,4 @@ Zaštita rasporeda nastavnika i domene ras.strukovnasamobor.hr
 - Your script: looks up the current key and writes the teacher data to private/<key>.
 - set-teacher-pin: when you change the PIN, it moves the private data to the new key, so the old key stops working at once.
 - ras. site: it also needs the key, otherwise anyone with the address still sees everything. Teachers there would enter the PIN once too.
+- ras. site redirect to Google Play Store or App Store
